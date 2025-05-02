@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef, useState, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Loader } from "@react-three/drei";
 import { DiscoLights } from "./components/DiscoLights";
 import { DiscoBall } from "./components/DiscoBall";
 import { Robot } from "./components/Robot";
@@ -28,37 +28,43 @@ export default function App() {
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "130vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-      }}
-    >
-      <audio ref={audioRef} src={song || undefined} loop />
+    <>
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <audio ref={audioRef} src={song || undefined} loop />
 
-      <Canvas shadows>
-        <Camera />
-        <fog attach="fog" args={["#000000", 30, 100]} />
+        <Canvas shadows>
+          <Suspense fallback={null}>
+            <Camera />
+            <fog attach="fog" args={["#000000", 30, 100]} />
 
-        <ambientLight intensity={0.5} />
+            <ambientLight intensity={0.5} />
 
-        <DiscoLights play={play} />
-        <DiscoBall play={play} />
-        <Robot play={play} />
-        <Floor />
+            <DiscoLights play={play} />
+            <DiscoBall play={play} />
+            <Robot play={play} />
+            <Floor />
 
-        {!play ? (
-          <ButtonPlay onClick={handlePlay} visible={true} />
-        ) : (
-          <SongSelector onSelect={handleSelectSong} visible={true} />
-        )}
+            {!play ? (
+              <ButtonPlay onClick={handlePlay} visible={true} />
+            ) : (
+              <SongSelector onSelect={handleSelectSong} visible={true} />
+            )}
 
-        <OrbitControls />
-      </Canvas>
-    </div>
+            <OrbitControls />
+          </Suspense>
+        </Canvas>
+      </div>
+
+      <Loader />
+    </>
   );
 }
